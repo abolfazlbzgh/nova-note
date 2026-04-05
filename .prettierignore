@@ -1,0 +1,16 @@
+build
+dest
+coverage
+node_modules
+public/**
+.dockerignore
+.gitignore
+.husky
+.github
+package-lock.json
+Dockerfile
+*.yaml
+*.yml
+*.json
+dist
+.next
