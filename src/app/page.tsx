@@ -1,52 +1,76 @@
-import Image from 'next/image';
+'use client';
 
-export default function Home() {
+import Link from 'next/link';
+import {useAuth} from '@/context/AuthContext';
+import {Sparkles, Image as ImageIcon, PenTool} from 'lucide-react';
+
+export default function LandingPage() {
+  const {user, loading} = useAuth();
+
   return (
-    <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-between bg-white px-16 py-32 sm:items-start dark:bg-black">
-        <Image className="dark:invert" src="/next.svg" alt="Next.js logo" width={100} height={20} priority />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl leading-10 font-semibold tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="hero bg-base-100 min-h-[85vh] flex-col justify-start pt-12 md:pt-24">
+      <div className="hero-content relative z-10 flex-col text-center">
+        <div className="max-w-3xl">
+          <h1 className="mb-6 text-5xl font-extrabold tracking-tight md:text-6xl">
+            Perfect Your Memories with <span className="text-primary">NovaNote</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{' '}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{' '}
-            or the{' '}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{' '}
-            center.
+          <p className="text-base-content/70 py-6 text-lg md:text-xl">
+            Your private AI-powered journal. Upload your images and let our advanced AI instantly polish your rough
+            drafts into perfect, grammatically flawless captions.
           </p>
+
+          <div className="mt-6 flex flex-wrap justify-center gap-4">
+            {loading ? (
+              <span className="loading loading-spinner text-primary loading-lg"></span>
+            ) : user ? (
+              <Link href="/dashboard" className="btn btn-primary btn-lg rounded-full px-10">
+                Go to Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link href="/register" className="btn btn-primary btn-lg rounded-full px-10">
+                  Get Started for Free
+                </Link>
+                <Link href="/login" className="btn btn-outline btn-lg rounded-full px-10">
+                  Log In
+                </Link>
+              </>
+            )}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="bg-foreground text-background flex h-12 w-full items-center justify-center gap-2 rounded-full px-5 transition-colors hover:bg-[#383838] md:w-[158px] dark:hover:bg-[#ccc]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image className="dark:invert" src="/vercel.svg" alt="Vercel logomark" width={16} height={16} />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] md:w-[158px] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="mt-20 grid w-full max-w-5xl grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="card bg-base-200/50 border-base-300 flex items-center border p-8 text-center shadow-sm">
+            <div className="bg-primary/10 mb-4 rounded-full p-4">
+              <ImageIcon className="text-primary h-8 w-8" />
+            </div>
+            <h3 className="mb-2 text-xl font-bold">Secure Uploads</h3>
+            <p className="text-base-content/70">
+              Store your personal photos and thoughts in a completely private vault.
+            </p>
+          </div>
+
+          <div className="card bg-base-200/50 border-base-300 flex items-center border p-8 text-center shadow-sm">
+            <div className="bg-secondary/10 mb-4 rounded-full p-4">
+              <PenTool className="text-secondary h-8 w-8" />
+            </div>
+            <h3 className="mb-2 text-xl font-bold">Draft Freely</h3>
+            <p className="text-base-content/70">
+              Write down your raw thoughts quickly without worrying about making mistakes.
+            </p>
+          </div>
+
+          <div className="card bg-base-200/50 border-base-300 flex items-center border p-8 text-center shadow-sm">
+            <div className="bg-accent/10 mb-4 rounded-full p-4">
+              <Sparkles className="text-accent h-8 w-8" />
+            </div>
+            <h3 className="mb-2 text-xl font-bold">AI Polish</h3>
+            <p className="text-base-content/70">
+              Instantly enhance your grammar, fix spelling, and perfect your tone with one click.
+            </p>
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
