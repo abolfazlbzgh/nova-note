@@ -9,6 +9,10 @@ Users can:
 
 This repository is built for open-source collaboration and production-grade full-stack practices.
 
+## Live Demo
+
+Try NovaNote here: https://nova-note-beta.vercel.app/
+
 ## Highlights
 
 - Optimized media pipeline with client-side crop + compression
@@ -16,7 +20,24 @@ This repository is built for open-source collaboration and production-grade full
 - Firebase-backed auth, database, and storage
 - Quota-aware limits for notes and AI enhancements
 - Clean dashboard UX with React Query caching
+- Built-in theme system with both light and dark modes
 - Security-focused stack: Turnstile + sanitization + protected API routes
+
+## Resume-Oriented Engineering Highlights
+
+This project demonstrates practical, production-focused full-stack skills:
+- End-to-end product development (UI, API, auth, storage, and deployment)
+- Security-first design with bot protection, input sanitization, and protected server routes
+- Performance-minded implementation (client media optimization, query caching, modern Next.js architecture)
+- Clean component architecture with reusable UI layers and centralized app state providers
+- Real-world third-party integration (Firebase, Gemini AI, Turnstile, Vercel)
+
+## UI and UX
+
+- Responsive design for desktop and mobile
+- Two visual themes: light mode and dark mode
+- Accessible, component-driven UI built with DaisyUI + Tailwind CSS
+- Smooth user feedback via toasts, modals, loading states, and optimistic interactions
 
 ## Tech Stack
 
@@ -148,6 +169,21 @@ NovaNote focuses on speed, security, and writing quality:
 - Speed: lightweight uploads, query caching, responsive dashboard
 - Security: protected APIs, anti-bot checks, sanitized text input
 - Writing quality: AI-assisted grammar and tone enhancement
+
+## Architecture Overview
+
+- App Router based Next.js application with server API endpoints under `src/app/api`
+- Firebase client SDK for frontend auth/storage flows
+- Firebase Admin SDK for privileged server-side operations
+- Shared API response helpers and auth middleware for consistent backend behavior
+- React Query for cache management and request lifecycle handling on the client
+
+## Roadmap Ideas
+
+- Add pagination and advanced filtering for notes
+- Add admin analytics dashboard
+- Add test coverage (unit + integration + e2e)
+- Add CI workflow for lint/build/test checks on pull requests
 
 ## Contributing
 
