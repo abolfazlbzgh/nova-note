@@ -1,4 +1,5 @@
 // app/api/auth/session/route.ts
+import {adminAuth} from '@/libs/firebaseAdmin';
 import {cookies} from 'next/headers';
 import {NextResponse} from 'next/server';
 
@@ -9,8 +10,8 @@ export async function POST(request: Request) {
   if (!token) {
     return NextResponse.json({error: 'No token provided'}, {status: 400});
   }
+  await adminAuth.verifyIdToken(token, true);
 
-  // Set the Secure, HttpOnly Cookie
   const cookieStore = await cookies();
   cookieStore.set('access_token', token, {
     httpOnly: true,

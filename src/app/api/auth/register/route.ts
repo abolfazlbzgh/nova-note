@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {NextResponse} from 'next/server';
 import {FieldValue} from 'firebase-admin/firestore';
 import {adminAuth, adminDb} from '@/libs/firebaseAdmin';
 import {Role} from '@/types/roles';
+import {DEFAULT_MAX_AI_USES, DEFAULT_MAX_NOTES} from '@/libs/constants';
 
 export async function POST(request: Request) {
   try {
@@ -34,6 +34,8 @@ export async function POST(request: Request) {
       email,
       name,
       role: Role.USER,
+      maxNotes: DEFAULT_MAX_NOTES,
+      maxAiUses: DEFAULT_MAX_AI_USES,
       createdAt: FieldValue.serverTimestamp(),
     });
 
@@ -64,14 +66,12 @@ export async function POST(request: Request) {
         });
       }
     } catch (telegramError) {
-      console.error('Failed to send notification:', telegramError);
+      console.error(telegramError);
     }
 
     return NextResponse.json({customToken});
-  } catch (error: any) {
-    console.error('Registration API Error:', error);
-
-    if (error.code === 'auth/email-already-exists') {
+  } catch (error: unknown) {
+    if (error instanceof Error && 'code' in error && error.code === 'auth/email-already-exists') {
       return NextResponse.json({message: 'This email is already registered.'}, {status: 400});
     }
 
