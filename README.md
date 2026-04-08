@@ -91,7 +91,6 @@ npm install
 2. Create `.env.local` and add required variables:
 
 ```env
-NEXT_PUBLIC_APP_URL=http://localhost:5000
 
 NEXT_PUBLIC_TURNSTILE_SITE_KEY=
 TURNSTILE_SECRET_KEY=
@@ -121,11 +120,11 @@ TELEGRAM_CHAT_ID=
 npm run dev
 ```
 
-App runs on `http://localhost:5000`.
+App runs on `http://localhost:3000`.
 
 ## Available Scripts
 
-- `npm run dev` - Start local dev server on port 5000
+- `npm run dev` - Start local dev server on port 3000
 - `npm run build` - Create production build
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
