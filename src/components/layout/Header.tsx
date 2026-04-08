@@ -1,17 +1,20 @@
 'use client';
 
-import {useTheme} from 'next-themes';
-import {Menu, Sun, Moon, LogOut} from 'lucide-react';
+import {Menu, LogOut} from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {useAuth} from '@/context/AuthContext';
 import {usePathname} from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+const ThemeToggle = dynamic(() => import('@/components/ui/ThemeToggle'), {
+  ssr: false,
+  loading: () => <div className="btn btn-circle btn-ghost"></div>,
+});
 
 export default function Header() {
-  const {theme, setTheme} = useTheme();
   const {user, claims, loading, signOut} = useAuth();
   const pathname = usePathname();
-  const isDark = theme === 'dark';
 
   const isDashboardRoute = pathname.startsWith('/dashboard') || pathname.startsWith('/settings');
 
@@ -40,12 +43,8 @@ export default function Header() {
         </Link>
       </div>
 
-      <div className="flex items-center justify-center gap-3" suppressHydrationWarning>
-        <label className="swap swap-rotate btn btn-circle btn-ghost">
-          <input type="checkbox" checked={isDark} onChange={() => setTheme(isDark ? 'light' : 'dark')} />
-          <Sun className="swap-on h-5 w-5" />
-          <Moon className="swap-off h-5 w-5" />
-        </label>
+      <div className="flex items-center justify-center gap-3">
+        <ThemeToggle />
 
         {!loading &&
           (user ? (
