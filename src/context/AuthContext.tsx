@@ -8,6 +8,8 @@ import {auth} from '@/libs/firebaseConfig';
 export type CustomClaims = {
   role?: Role;
   status?: string;
+  picture?: string;
+  name?: string;
 };
 
 type AuthContextValue = {
@@ -31,7 +33,6 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
   const [claims, setClaims] = useState<CustomClaims | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Syncs the token to a secure HttpOnly cookie via Next.js API
   const syncSessionCookie = async (token: string) => {
     try {
       await fetch('/api/auth/session', {
@@ -54,6 +55,8 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
       setClaims({
         role: tokenResult.claims.role as Role,
         status: tokenResult.claims.status as string,
+        picture: tokenResult.claims.picture as string,
+        name: tokenResult.claims.name as string,
       });
 
       await syncSessionCookie(tokenResult.token);
