@@ -1,36 +1,163 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NovaNote
 
-## Getting Started
+NovaNote is a secure, high-performance, AI-powered journaling app.
 
-First, run the development server:
+Users can:
+- Upload and optimize images
+- Write rough personal drafts
+- Instantly enhance grammar and tone with AI
+
+This repository is built for open-source collaboration and production-grade full-stack practices.
+
+## Highlights
+
+- Optimized media pipeline with client-side crop + compression
+- AI text enhancement with Google Gemini
+- Firebase-backed auth, database, and storage
+- Quota-aware limits for notes and AI enhancements
+- Clean dashboard UX with React Query caching
+- Security-focused stack: Turnstile + sanitization + protected API routes
+
+## Tech Stack
+
+- Frontend: Next.js 16.2 (App Router), React 19, Tailwind CSS 4, DaisyUI
+- Data layer: TanStack React Query
+- Auth/DB/Storage: Firebase + Firebase Admin
+- AI: Google Gemini (`@google/generative-ai`)
+- Security: Cloudflare Turnstile, DOMPurify
+- Media: `react-easy-crop`, `browser-image-compression`
+
+## Project Structure
+
+```text
+src/
+	app/
+		api/
+			ai/enhance/
+			auth/
+			notes/
+			users/profile/
+		dashboard/
+		login/
+		register/
+		forgot-password/
+	components/
+		auth/
+		layout/
+		providers/
+		ui/
+	context/
+	libs/
+	types/
+```
+
+## Prerequisites
+
+- Node.js 20+
+- npm 10+
+- Firebase project (Auth, Firestore, Storage)
+- Google AI API key (Gemini)
+- Cloudflare Turnstile site + secret keys
+
+## Setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Create `.env.local` and add required variables:
+
+```env
+NEXT_PUBLIC_APP_URL=http://localhost:5000
+
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=
+TURNSTILE_SECRET_KEY=
+
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
+
+FIREBASE_PROJECT_ID=
+FIREBASE_CLIENT_EMAIL=
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+
+GEMINI_API_KEY=
+
+# Optional: registration notifications
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
+```
+
+3. Run development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+App runs on `http://localhost:5000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev` - Start local dev server on port 5000
+- `npm run build` - Create production build
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run format` - Format TS/JS files with Prettier
 
-## Learn More
+## Security Notes
 
-To learn more about Next.js, take a look at the following resources:
+- Never commit real secrets (`.env*` is ignored by default).
+- Rotate all keys before deployment if they were ever exposed.
+- Keep Firebase Admin credentials server-side only.
+- Turnstile verification is enforced in auth-related API routes.
+- User-generated text is sanitized before submission on the client.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Firebase Requirements
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+At minimum, configure:
+- Firebase Authentication (email/password)
+- Firestore database
+- Firebase Storage bucket
+- Service account credentials for server routes using Admin SDK
 
-## Deploy on Vercel
+If you publish this repository, include your Firestore and Storage rules files and deployment steps.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment Checklist
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Set all production environment variables
+- Verify Firebase rules are locked down
+- Ensure Turnstile site keys match production domain
+- Run:
+
+```bash
+npm run lint
+npm run build
+```
+
+- Disable verbose logging in production
+
+## Product Positioning
+
+NovaNote focuses on speed, security, and writing quality:
+- Speed: lightweight uploads, query caching, responsive dashboard
+- Security: protected APIs, anti-bot checks, sanitized text input
+- Writing quality: AI-assisted grammar and tone enhancement
+
+## Contributing
+
+Issues and pull requests are welcome.
+
+Before opening a PR:
+- Keep changes focused and minimal
+- Follow existing code style
+- Run lint/build locally
+
+## License
+
+Choose and add a license file before final public release (for example, MIT).
