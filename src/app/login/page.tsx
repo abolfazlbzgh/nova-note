@@ -6,7 +6,7 @@ import {useRouter, useSearchParams} from 'next/navigation';
 import {signInWithCustomToken} from 'firebase/auth';
 import {auth} from '@/libs/firebaseConfig';
 import {useAuth} from '@/context/AuthContext';
-import {Eye, EyeOff, LogIn, UserPlus} from 'lucide-react';
+import {Eye, EyeOff, LogIn, UserPlus, Sparkles} from 'lucide-react';
 import {Turnstile, type TurnstileInstance} from '@marsidev/react-turnstile';
 
 type LoginFormType = {email: string; password: string};
@@ -22,7 +22,6 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
-  // Widget Reference
   const turnstileRef = useRef<TurnstileInstance>(null);
 
   const rawRedirect = searchParams.get('redirect');
@@ -102,36 +101,43 @@ function LoginForm() {
   if (authLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
+        <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
   }
 
   return (
-    <div className="hero bg-base-200 min-h-screen">
-      <div className="hero-content w-full flex-col gap-8 px-2 lg:flex-row-reverse lg:gap-16">
+    <div className="hero bg-base-100 selection:bg-primary/30 min-h-screen">
+      <div className="hero-content w-full flex-col gap-10 px-4 lg:flex-row-reverse lg:gap-20">
         <div className="max-w-xl text-center lg:text-left">
-          <h1 className="text-3xl font-bold sm:text-5xl">Welcome back!</h1>
-          <p className="text-base-content/80 py-6 text-sm sm:text-base">
-            Access your academic dashboard to manage your portfolio, track research progress, and coordinate with your
-            team.
+          <div className="bg-primary/10 text-primary mb-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium">
+            <Sparkles className="h-4 w-4" />
+            Welcome back to NovaNote
+          </div>
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            Perfect Your <br className="hidden lg:block" />
+            Memories.
+          </h1>
+          <p className="text-base-content/70 py-6 text-base leading-relaxed sm:text-lg">
+            Access your private vault. Upload your images, jot down your rough thoughts, and let our advanced AI
+            instantly polish them into perfect, grammatically flawless captions.
           </p>
         </div>
 
-        <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-          <div className="card-body p-3 sm:p-8">
-            <h2 className="card-title mb-4 justify-center text-2xl">Sign In</h2>
+        <div className="card bg-base-200/50 border-base-300 w-full max-w-md shrink-0 border shadow-xl backdrop-blur-sm">
+          <div className="card-body p-6 sm:p-10">
+            <h2 className="mb-6 text-center text-2xl font-bold">Sign In</h2>
 
             <form onSubmit={handleSubmit} noValidate>
-              <fieldset className="fieldset w-full space-y-3">
+              <div className="flex flex-col gap-4">
                 <div className="form-control w-full">
-                  <label className="label" htmlFor="email">
-                    <span className="label-text font-medium">Email</span>
+                  <label className="label pb-1.5" htmlFor="email">
+                    <span className="label-text text-base-content/90 font-semibold">Email Address</span>
                   </label>
                   <input
                     id="email"
                     type="email"
-                    className="input input-bordered w-full"
+                    className="input input-bordered bg-base-100 focus:border-primary focus:ring-primary w-full focus:ring-1"
                     placeholder="you@example.com"
                     value={form.email}
                     onChange={handleChange('email')}
@@ -141,14 +147,19 @@ function LoginForm() {
                 </div>
 
                 <div className="form-control w-full">
-                  <label className="label" htmlFor="password">
-                    <span className="label-text font-medium">Password</span>
-                  </label>
+                  <div className="flex items-center justify-between pb-1.5">
+                    <label className="label p-0" htmlFor="password">
+                      <span className="label-text text-base-content/90 font-semibold">Password</span>
+                    </label>
+                    <Link href="/forgot-password" className="text-primary text-xs font-medium hover:underline">
+                      Forgot password?
+                    </Link>
+                  </div>
                   <div className="relative">
                     <input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
-                      className="input input-bordered w-full pr-10"
+                      className="input input-bordered bg-base-100 focus:border-primary focus:ring-primary w-full pr-12 focus:ring-1"
                       placeholder="••••••••"
                       value={form.password}
                       onChange={handleChange('password')}
@@ -157,7 +168,7 @@ function LoginForm() {
                     />
                     <button
                       type="button"
-                      className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 transition-colors hover:text-gray-700"
+                      className="text-base-content/40 hover:text-base-content absolute top-1/2 right-3 -translate-y-1/2 transition-colors focus:outline-none"
                       onClick={() => setShowPassword(!showPassword)}
                       tabIndex={-1}
                       aria-label="Toggle password visibility"
@@ -165,17 +176,9 @@ function LoginForm() {
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
                   </div>
-                  <div className="mt-1 text-right">
-                    <Link
-                      href="/forgot-password"
-                      className="link link-hover text-base-content/60 hover:text-primary text-xs transition-colors"
-                    >
-                      Forgot password?
-                    </Link>
-                  </div>
                 </div>
 
-                <div className="flex w-full justify-center overflow-hidden py-2">
+                <div className="mt-2 flex w-full justify-center overflow-hidden rounded-lg">
                   <Turnstile
                     ref={turnstileRef}
                     siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
@@ -192,31 +195,26 @@ function LoginForm() {
                   />
                 </div>
 
-                {error && (
-                  <div className="alert alert-error w-full justify-center rounded-lg py-2 text-sm">{error}</div>
-                )}
+                {error && <div className="alert alert-error mt-2 rounded-lg py-3 text-sm shadow-sm">{error}</div>}
 
-                <button className="btn btn-neutral mt-2 w-full" type="submit" disabled={submitting}>
+                <button className="btn btn-primary mt-4 w-full" type="submit" disabled={submitting}>
                   {submitting ? (
                     <span className="loading loading-spinner loading-sm"></span>
                   ) : (
                     <>
-                      <LogIn className="mr-2 h-4 w-4" /> Login
+                      <LogIn className="mr-2 h-4 w-4" /> Log In
                     </>
                   )}
                 </button>
-              </fieldset>
+              </div>
             </form>
 
-            <div className="divider text-base-content/40 my-4 text-xs">OR</div>
+            <div className="divider text-base-content/40 my-6 text-xs font-medium tracking-wider uppercase">OR</div>
 
-            <div className="text-center text-sm">
-              Don&apos;t have an account?{' '}
-              <Link
-                href="/register"
-                className="link link-hover text-primary inline-flex items-center gap-1 font-medium"
-              >
-                Create Account <UserPlus className="h-3 w-3" />
+            <div className="text-base-content/70 text-center text-sm">
+              Don&apos;t have an account yet?{' '}
+              <Link href="/register" className="text-primary inline-flex items-center gap-1 font-bold hover:underline">
+                Create Account <UserPlus className="h-3.5 w-3.5" />
               </Link>
             </div>
           </div>
@@ -231,7 +229,7 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center">
-          <span className="loading loading-spinner loading-lg"></span>
+          <span className="loading loading-spinner loading-lg text-primary"></span>
         </div>
       }
     >

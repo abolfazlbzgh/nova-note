@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import {useState, useEffect, useRef} from 'react';
@@ -7,7 +6,7 @@ import {useRouter} from 'next/navigation';
 import {signInWithCustomToken} from 'firebase/auth';
 import {auth} from '@/libs/firebaseConfig';
 import {useAuth} from '@/context/AuthContext';
-import {Eye, EyeOff, Check, X, ShieldCheck} from 'lucide-react';
+import {Eye, EyeOff, Check, X, ShieldCheck, Sparkles} from 'lucide-react';
 import {Turnstile, type TurnstileInstance} from '@marsidev/react-turnstile';
 
 type RegisterForm = {name: string; email: string; password: string; confirm: string};
@@ -41,13 +40,11 @@ export default function RegisterPage() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
 
-  // Password Logic
   const [criteria, setCriteria] = useState({
     length: false,
     upper: false,
     lower: false,
     number: false,
-    special: false,
   });
   const [strengthScore, setStrengthScore] = useState(0);
 
@@ -58,7 +55,6 @@ export default function RegisterPage() {
       upper: /[A-Z]/.test(pwd),
       lower: /[a-z]/.test(pwd),
       number: /[0-9]/.test(pwd),
-      special: /[!@#$%^&*(),.?":{}|<>]/.test(pwd),
     };
 
     setCriteria(rules);
@@ -90,7 +86,7 @@ export default function RegisterPage() {
       isValid = false;
     }
 
-    if (strengthScore < 5) {
+    if (strengthScore < 4) {
       newErrors.password = 'Password is too weak. Please meet all requirements.';
       isValid = false;
     }
@@ -152,9 +148,10 @@ export default function RegisterPage() {
       });
 
       router.replace('/dashboard');
-    } catch (err: any) {
+    } catch (err: Error | unknown) {
       console.error(err);
-      setErrors({general: err.message || 'An unexpected error occurred.'});
+      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred.';
+      setErrors({general: errorMessage});
       setTurnstileToken(null);
       turnstileRef.current?.reset();
     } finally {
@@ -163,40 +160,52 @@ export default function RegisterPage() {
   };
 
   const getProgressColor = () => {
-    if (strengthScore <= 2) return 'progress-error';
-    if (strengthScore <= 4) return 'progress-warning';
+    if (strengthScore <= 1) return 'progress-error';
+    if (strengthScore <= 3) return 'progress-warning';
     return 'progress-success';
   };
 
   if (authLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
+        <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
   }
 
   return (
-    <div className="hero bg-base-200 mt-[64px] flex min-h-screen items-center justify-center">
-      <div className="hero-content w-full flex-col items-center justify-center gap-6 px-2 py-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold sm:text-4xl">Create Account</h1>
-          <p className="text-base-content/70 py-2 text-sm sm:text-base">Join Acapage to manage your portfolio.</p>
+    <div className="hero bg-base-100 selection:bg-primary/30 min-h-screen">
+      <div className="hero-content w-full flex-col gap-10 px-4 lg:flex-row-reverse lg:gap-20">
+        <div className="max-w-xl text-center lg:text-left">
+          <div className="bg-primary/10 text-primary mb-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium">
+            <Sparkles className="h-4 w-4" />
+            Join NovaNote Today
+          </div>
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            Start Perfecting <br className="hidden lg:block" />
+            Your Entries.
+          </h1>
+          <p className="text-base-content/70 py-6 text-base leading-relaxed sm:text-lg">
+            Create your private vault in seconds. Upload your memories, draft your thoughts, and experience AI-powered
+            grammar enhancement instantly.
+          </p>
         </div>
 
-        <div className="card bg-base-100 w-full max-w-md shadow-2xl">
-          <div className="card-body p-3 sm:p-8">
+        <div className="card bg-base-200/50 border-base-300 w-full max-w-md shrink-0 border shadow-xl backdrop-blur-sm">
+          <div className="card-body p-6 sm:p-10">
+            <h2 className="mb-2 text-center text-2xl font-bold">Create Account</h2>
+
             <form onSubmit={handleSubmit} noValidate>
-              <fieldset className="fieldset w-full space-y-3">
+              <div className="flex flex-col gap-4">
                 <div className="form-control w-full">
-                  <label className="label pt-0 pb-1" htmlFor="name">
-                    <span className="label-text text-xs font-medium sm:text-sm">Full Name</span>
+                  <label className="label pb-1.5" htmlFor="name">
+                    <span className="label-text text-base-content/90 font-semibold">Full Name</span>
                   </label>
                   <input
                     id="name"
                     type="text"
-                    className={`input input-bordered input-md w-full ${errors.name ? 'input-error' : ''}`}
-                    placeholder="Dr. John Smith"
+                    className={`input input-bordered bg-base-100 focus:border-primary focus:ring-primary w-full focus:ring-1 ${errors.name ? 'input-error' : ''}`}
+                    placeholder="John Doe"
                     value={form.name}
                     onChange={handleChange('name')}
                     required
@@ -205,13 +214,13 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="form-control w-full">
-                  <label className="label pt-0 pb-1" htmlFor="email">
-                    <span className="label-text text-xs font-medium sm:text-sm">Email</span>
+                  <label className="label pb-1.5" htmlFor="email">
+                    <span className="label-text text-base-content/90 font-semibold">Email Address</span>
                   </label>
                   <input
                     id="email"
                     type="email"
-                    className={`input input-bordered input-md w-full ${errors.email ? 'input-error' : ''}`}
+                    className={`input input-bordered bg-base-100 focus:border-primary focus:ring-primary w-full focus:ring-1 ${errors.email ? 'input-error' : ''}`}
                     placeholder="you@example.com"
                     value={form.email}
                     onChange={handleChange('email')}
@@ -221,8 +230,8 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="form-control w-full">
-                  <label className="label pt-0 pb-1" htmlFor="new-password">
-                    <span className="label-text text-xs font-medium sm:text-sm">Password</span>
+                  <label className="label pb-1.5" htmlFor="new-password">
+                    <span className="label-text text-base-content/90 font-semibold">Password</span>
                   </label>
                   <div className="relative">
                     <input
@@ -230,8 +239,8 @@ export default function RegisterPage() {
                       name="new-password"
                       autoComplete="new-password"
                       type={showPassword ? 'text' : 'password'}
-                      className={`input input-bordered input-md w-full pr-10 ${
-                        errors.password ? 'input-error' : form.password && strengthScore < 5 ? 'input-warning' : ''
+                      className={`input input-bordered bg-base-100 focus:border-primary focus:ring-primary w-full pr-12 focus:ring-1 ${
+                        errors.password ? 'input-error' : form.password && strengthScore < 4 ? 'input-warning' : ''
                       }`}
                       placeholder="••••••••"
                       value={form.password}
@@ -239,7 +248,7 @@ export default function RegisterPage() {
                     />
                     <button
                       type="button"
-                      className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-700"
+                      className="text-base-content/40 hover:text-base-content absolute top-1/2 right-3 -translate-y-1/2 transition-colors focus:outline-none"
                       onClick={() => setShowPassword(!showPassword)}
                       tabIndex={-1}
                     >
@@ -248,26 +257,25 @@ export default function RegisterPage() {
                   </div>
                   {errors.password && <span className="text-error mt-1 text-xs">{errors.password}</span>}
 
-                  <div className="mt-2">
+                  <div className="mt-3">
                     <progress
                       className={`progress h-1.5 w-full ${getProgressColor()}`}
                       value={strengthScore}
-                      max="5"
+                      max="4"
                     ></progress>
                   </div>
 
-                  <div className="mt-2 grid grid-cols-1 gap-x-2 gap-y-1 text-[11px] sm:grid-cols-2 sm:text-xs">
+                  <div className="mt-3 grid grid-cols-2 gap-x-2 gap-y-2 text-xs">
                     <Requirement met={criteria.length} label="8+ Characters" />
                     <Requirement met={criteria.upper} label="Uppercase (A-Z)" />
                     <Requirement met={criteria.lower} label="Lowercase (a-z)" />
                     <Requirement met={criteria.number} label="Number (0-9)" />
-                    <Requirement met={criteria.special} label="Symbol (@#$)" />
                   </div>
                 </div>
 
                 <div className="form-control w-full">
-                  <label className="label pt-0 pb-1" htmlFor="confirm-password">
-                    <span className="label-text text-xs font-medium sm:text-sm">Confirm Password</span>
+                  <label className="label pb-1.5" htmlFor="confirm-password">
+                    <span className="label-text text-base-content/90 font-semibold">Confirm Password</span>
                   </label>
                   <div className="relative">
                     <input
@@ -275,14 +283,14 @@ export default function RegisterPage() {
                       name="confirm-password"
                       autoComplete="new-password"
                       type={showConfirm ? 'text' : 'password'}
-                      className={`input input-bordered input-md w-full pr-10 ${errors.confirm ? 'input-error' : ''}`}
+                      className={`input input-bordered bg-base-100 focus:border-primary focus:ring-primary w-full pr-12 focus:ring-1 ${errors.confirm ? 'input-error' : ''}`}
                       placeholder="••••••••"
                       value={form.confirm}
                       onChange={handleChange('confirm')}
                     />
                     <button
                       type="button"
-                      className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-700"
+                      className="text-base-content/40 hover:text-base-content absolute top-1/2 right-3 -translate-y-1/2 transition-colors focus:outline-none"
                       onClick={() => setShowConfirm(!showConfirm)}
                       tabIndex={-1}
                     >
@@ -292,33 +300,33 @@ export default function RegisterPage() {
                   {errors.confirm && <span className="text-error mt-1 text-xs">{errors.confirm}</span>}
                 </div>
 
-                <div className="form-control w-full">
-                  <label className="label mt-2 cursor-pointer items-center justify-start gap-2 p-0 sm:gap-3">
+                <div className="form-control mt-2 w-full">
+                  <label className="label cursor-pointer items-start justify-start gap-3 p-0">
                     <input
                       type="checkbox"
-                      className={`checkbox checkbox-sm shrink-0 ${errors.terms ? 'checkbox-error' : 'checkbox-primary'}`}
+                      className={`checkbox checkbox-sm mt-0.5 shrink-0 ${errors.terms ? 'checkbox-error' : 'checkbox-primary'}`}
                       checked={acceptTerms}
                       onChange={(e) => {
                         setAcceptTerms(e.target.checked);
                         if (errors.terms) setErrors((prev) => ({...prev, terms: undefined}));
                       }}
                     />
-                    <span className="label-text flex-1 text-xs leading-tight sm:text-sm">
+                    <span className="label-text text-base-content/80 text-sm leading-snug">
                       I agree to the{' '}
-                      <Link href="/terms" target="_blank" className="link link-primary">
+                      <Link href="/terms" target="_blank" className="text-primary font-medium hover:underline">
                         Terms of Service
                       </Link>{' '}
                       and{' '}
-                      <Link href="/privacy" target="_blank" className="link link-primary">
+                      <Link href="/privacy" target="_blank" className="text-primary font-medium hover:underline">
                         Privacy Policy
                       </Link>
                       .
                     </span>
                   </label>
-                  {errors.terms && <div className="text-error mt-1 ml-7 text-xs sm:ml-8">{errors.terms}</div>}
+                  {errors.terms && <div className="text-error mt-1 ml-8 text-xs">{errors.terms}</div>}
                 </div>
 
-                <div className="flex w-full justify-center overflow-hidden py-2">
+                <div className="mt-2 flex w-full justify-center overflow-hidden rounded-lg">
                   <Turnstile
                     ref={turnstileRef}
                     siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
@@ -337,28 +345,26 @@ export default function RegisterPage() {
                 </div>
 
                 {errors.general && (
-                  <div className="alert alert-error w-full justify-center rounded-lg px-3 py-2 text-sm">
-                    {errors.general}
-                  </div>
+                  <div className="alert alert-error mt-2 rounded-lg py-3 text-sm shadow-sm">{errors.general}</div>
                 )}
 
-                <button className="btn btn-neutral mt-2 w-full" type="submit" disabled={submitting}>
+                <button className="btn btn-primary mt-4 w-full" type="submit" disabled={submitting}>
                   {submitting ? (
                     <span className="loading loading-spinner loading-sm"></span>
                   ) : (
                     <>
-                      Create Account <ShieldCheck className="ml-1 h-4 w-4" />
+                      Create Account <ShieldCheck className="ml-2 h-4 w-4" />
                     </>
                   )}
                 </button>
-              </fieldset>
+              </div>
             </form>
 
-            <div className="divider text-base-content/40 my-3 text-xs">OR</div>
+            <div className="divider text-base-content/40 my-6 text-xs font-medium tracking-wider uppercase">OR</div>
 
-            <div className="text-center text-sm">
+            <div className="text-base-content/70 text-center text-sm">
               Already have an account?{' '}
-              <Link href="/login" className="link link-hover text-primary font-medium">
+              <Link href="/login" className="text-primary font-bold hover:underline">
                 Log in here
               </Link>
             </div>
@@ -372,9 +378,9 @@ export default function RegisterPage() {
 function Requirement({met, label}: {met: boolean; label: string}) {
   return (
     <div
-      className={`flex items-center gap-1.5 transition-colors duration-300 ${met ? 'text-success' : 'text-base-content/40'}`}
+      className={`flex items-center gap-1.5 transition-colors duration-300 ${met ? 'text-success font-medium' : 'text-base-content/40'}`}
     >
-      {met ? <Check className="h-3 w-3 shrink-0" /> : <X className="h-3 w-3 shrink-0" />}
+      {met ? <Check className="h-3.5 w-3.5 shrink-0" /> : <X className="h-3.5 w-3.5 shrink-0" />}
       <span className="truncate">{label}</span>
     </div>
   );
